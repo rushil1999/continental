@@ -1,56 +1,95 @@
-# {{crew_name}} Crew
+# Continental
 
-Welcome to the {{crew_name}} Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+An AI-powered property search tool built on [crewAI](https://crewai.com). Describe what you're looking for in plain English and Continental searches Zillow, filters results to your criteria, then fetches full details for the top matches — all in one run.
+
+## How it works
+
+Continental runs a two-agent crew powered by **Grok**:
+
+1. **Listing Specialist** — reads your natural language prompt, translates it into a precise Zillow search (location, price range, beds, baths, home type, parking, pets, amenities, etc.), and returns a shortlist of matching listings.
+2. **Property Analyst** — takes the shortlist, fetches full details for each property (description, features, listing agent, days on market), and compiles a clean, readable report.
+
+## Example prompts
+
+```
+I am looking to rent a 3B2B or a 3B3B house or apartment with a budget of
+$4,500–$5,000/month in the Sunnyvale area. Need 2 parking spots.
+```
+
+```
+Looking to buy a 4-bedroom single-family home under $1.8M in Palo Alto or
+Menlo Park, built after 2000, with a garage and at least 2,000 sqft.
+```
+
+```
+Find me pet-friendly apartments for rent in Austin, TX — 1 or 2 beds,
+max $2,200/month, dogs allowed.
+```
+
+```
+2BR/2BA condo for sale in Seattle, WA. Budget $600K–$750K.
+Water or city views preferred, low HOA.
+```
+
+```
+Townhouse for rent in San Jose, 3 beds, 2+ baths, $3,800–$4,500/month.
+Move-in ready, in-unit laundry, at least 1 parking spot.
+```
 
 ## Installation
 
-Ensure you have Python >=3.10 <3.14 installed on your system. This project uses [UV](https://docs.astral.sh/uv/) for dependency management and package handling, offering a seamless setup and execution experience.
+Requires Python >=3.10, <3.14.
 
-First, if you haven't already, install uv:
+Install [uv](https://docs.astral.sh/uv/) if you don't have it:
 
 ```bash
 pip install uv
 ```
 
-Next, navigate to your project directory and install the dependencies:
+Install project dependencies:
 
-(Optional) Lock the dependencies and install them by using the CLI command:
 ```bash
 crewai install
 ```
 
-### Customizing
+## Configuration
 
-**Add your `OPENAI_API_KEY` into the `.env` file**
+Copy `.env.example` to `.env` (or create `.env`) and fill in your API keys:
 
-- Modify `src/continental_flow/config/agents.yaml` to define your agents
-- Modify `src/continental_flow/config/tasks.yaml` to define your tasks
-- Modify `src/continental_flow/crew.py` to add your own logic, tools and specific args
-- Modify `src/continental_flow/main.py` to add custom inputs for your agents and tasks
+```bash
+HASDATA_API_KEY=your_hasdata_api_key    # Zillow data via HasData API
+GROK_API_KEY=your_grok_api_key         # xAI Grok LLM
+```
 
-## Running the Project
+- **HasData API key** — sign up at [hasdata.com](https://hasdata.com) to get Zillow listing access.
+- **Grok API key** — sign up at [console.x.ai](https://console.x.ai) to get xAI API access.
 
-To kickstart your flow and begin execution, run this from the root folder of your project:
+## Running
+
+From the project root:
 
 ```bash
 crewai run
 ```
 
-This command initializes the continental-flow Flow as defined in your configuration.
+You'll be prompted for:
+1. **What are you looking for?** — describe your ideal property in plain English.
+2. **How many properties to detail?** — number of top results to fully analyze (default: 5).
 
-This example, unmodified, will run a content creation flow on AI Agents and save the output to `output/post.md`.
+Continental will search Zillow, then print a detailed report for each match.
 
-## Understanding Your Crew
+## Project structure
 
-The continental-flow Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
-
-## Support
-
-For support, questions, or feedback regarding the {{crew_name}} Crew or crewAI.
-
-- Visit our [documentation](https://docs.crewai.com)
-- Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
-- [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
-- [Chat with our docs](https://chatg.pt/DWjSBZn)
-
-Let's create wonders together with the power and simplicity of crewAI.
+```
+src/continental_flow/
+├── main.py                          # Flow entry point
+├── crews/
+│   └── zillow_crew/
+│       ├── zillow_crew.py           # Agent & task definitions
+│       └── config/
+│           ├── agents.yaml          # Agent roles and goals
+│           └── tasks.yaml           # Task prompts
+└── tools/
+    ├── zillow_listing_tool.py       # Zillow search API wrapper
+    └── zillow_property_tool.py      # Zillow property details API wrapper
+```
