@@ -1,0 +1,45 @@
+search_listings_task:
+  description: >
+    The user is looking for: "{raw_prompt}"
+
+    Carefully read the user's request and call the zillow_listing_search tool.
+    Rules:
+    - Use ONLY the location(s) explicitly mentioned by the user — do NOT substitute
+      or default to any other city or area.
+    - If multiple locations are mentioned (e.g. "Sunnyvale and Mountain View"),
+      run separate searches for each and combine the results.
+    - Infer listing type (forSale/forRent), price range, beds, baths, home types,
+      and any other filters directly from what the user wrote.
+    - Omit any filter the user did not mention — do not guess or add defaults.
+
+    The API response contains a "properties" array with fields:
+    url, addressRaw, price, beds, baths, area (sqft), homeType, status, daysOnZillow.
+
+    Return the combined results as a JSON list (up to 10 listings total).
+    Each item must include: url, addressRaw, price, beds, baths, area, homeType, daysOnZillow.
+  expected_output: >
+    A JSON-formatted list of up to 10 property listings, each containing:
+    url, addressRaw, price, beds, baths, area, homeType, daysOnZillow.
+  agent: listing_specialist
+
+fetch_details_task:
+  description: >
+    You will receive a list of Zillow property listings from the previous task.
+    For each of the top {max_properties} properties, extract its Zillow URL and call
+    the zillow_property_details tool to fetch full details.
+
+    Compile a report for each property covering:
+      - Full address
+      - Price
+      - Beds / Baths / Square footage
+      - Property description
+      - Key features and amenities
+      - Listing agent name and contact (if available)
+      - Days on market
+      - Any notable highlights
+
+    Present each property as a clearly formatted section separated by a divider.
+  expected_output: >
+    A formatted report with a detailed profile for each of the top {max_properties}
+    properties, clearly separated and easy to read.
+  agent: property_analyst

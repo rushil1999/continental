@@ -1,0 +1,23 @@
+[project]
+name = "continental_flow"
+version = "0.1.0"
+description = "continental-flow using crewAI"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "crewai[tools]==1.14.7",
+    "litellm"
+]
+
+[project.scripts]
+kickoff = "continental_flow.main:kickoff"
+run_crew = "continental_flow.main:kickoff"
+plot = "continental_flow.main:plot"
+run_with_trigger = "continental_flow.main:run_with_trigger"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "flow"
